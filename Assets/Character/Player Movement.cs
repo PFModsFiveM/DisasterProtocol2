@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(StateMachine))]
 public class PlayerMovement : MonoBehaviour
 {
     public float maximumSpeed;
@@ -26,6 +28,39 @@ public class PlayerMovement : MonoBehaviour
     {
         stateMachine = GetComponent<StateMachine>();
         characterController = GetComponent<CharacterController>();
+
+        if (stateMachine == null)
+        {
+            stateMachine = gameObject.AddComponent<StateMachine>();
+            Debug.LogWarning("StateMachine was missing and has been added automatically.", this);
+        }
+
+        if (characterController == null)
+        {
+            characterController = gameObject.AddComponent<CharacterController>();
+            Debug.LogWarning("CharacterController was missing and has been added automatically.", this);
+        }
+
+        if (maximumSpeed <= 0f)
+        {
+            maximumSpeed = 5f;
+        }
+
+        if (rotationSpeed <= 0f)
+        {
+            rotationSpeed = 10f;
+        }
+
+        if (jumpButtonGracePeriod <= 0f)
+        {
+            jumpButtonGracePeriod = 0.2f;
+        }
+
+        if (jumpSpeed <= 0f)
+        {
+            jumpSpeed = 5f;
+        }
+
         originalStepOffset = characterController.stepOffset;
         
         if (cameraTransform == null && Camera.main != null)
@@ -42,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     void SetupStates()
     {
-        stateMachine.AddState("idle", new IdleState());
+        stateMachine.AddState("idle", new IdleState(this));
         stateMachine.AddState("moving", new MovingState(this));
     }
 
@@ -50,12 +85,6 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleMouseLook();
         HandleInput();
-        stateMachine.Update();
-    }
-
-    void FixedUpdate()
-    {
-        stateMachine.FixedUpdate();
     }
 
     private void HandleMouseLook()
@@ -148,9 +177,28 @@ public class PlayerMovement : MonoBehaviour
     // State classes
     private class IdleState : StateMachine.State
     {
+        private PlayerMovement player;
+
+        public IdleState(PlayerMovement playerMovement)
+        {
+            player = playerMovement;
+        }
+
         public override void OnEnter()
         {
             SetAnimatorBool("IsMoving", false);
+            SetAnimatorFloat("Input Magnitude", 0f);
+        }
+
+        public override void Tick()
+        {
+            // Keep gravity grounded while idle.
+            player.ApplyMovement(Vector3.zero, 0f);
+
+            if (player.GetInputMagnitude() > 0.01f)
+            {
+                stateMachine.SetState("moving");
+            }
         }
     }
 
@@ -180,6 +228,16 @@ public class PlayerMovement : MonoBehaviour
 
             float speed = inputMag * player.maximumSpeed * (player.IsRunning() ? player.runSpeedMultiplier : 1f);
             player.ApplyMovement(direction, speed);
+
+            if (direction.sqrMagnitude > 0.0001f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                player.transform.rotation = Quaternion.Slerp(
+                    player.transform.rotation,
+                    targetRotation,
+                    player.rotationSpeed * Time.deltaTime
+                );
+            }
         }
     }
 }

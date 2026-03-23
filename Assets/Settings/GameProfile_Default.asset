@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f2c3d4e5b64789a0b1c2d3e4f50617, type: 3}
+  m_Name: GameProfile_Default
+  m_EditorClassIdentifier: 
+  profileName: Default Profile
+  defaultStartScore: 0
+  defaultPlayerHealth: 100
+  highScore: 11
+  previousScore: 11
+  lastGameplayJson: "{\n    \"sceneName\": \"OutdoorsScene\",\n    \"savedAtUtc\":
+    \"2026-03-23T16:28:34.7203579Z\",\n    \"playerPosition\": {\n        \"x\":
+    -730.2803955078125,\n        \"y\": -3.4113426208496095,\n        \"z\": -117.03949737548828\n   
+    },\n    \"playerHealth\": 100.0,\n    \"npcPosition\": {\n        \"x\": -666.1026000976563,\n       
+    \"y\": -3.5758442878723146,\n        \"z\": -151.69125366210938\n    },\n   
+    \"npcState\": \"Patrol\",\n    \"currentScore\": 11,\n    \"coinsCollected\":
+    11,\n    \"totalCoinsInScene\": 42,\n    \"elapsedTime\": 41.91607666015625\n}"
+  lastStatisticsJson: "{\n    \"savedAtUtc\": \"2026-03-23T16:28:34.7208749Z\",\n   
+    \"highScore\": 11,\n    \"previousScore\": 11,\n    \"sessionCount\": 3,\n   
+    \"bestTime\": 0.019999992102384568\n}"
+  lastEnvironmentJson: "{\n    \"sceneName\": \"OutdoorsScene\",\n    \"savedAtUtc\":
+    \"2026-03-23T16:28:34.7223935Z\",\n    \"sceneObjects\": []\n}"
