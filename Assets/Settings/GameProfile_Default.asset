@@ -15,17 +15,17 @@ MonoBehaviour:
   profileName: Default Profile
   defaultStartScore: 0
   defaultPlayerHealth: 100
-  highScore: 11
-  previousScore: 11
+  highScore: 12
+  previousScore: 12
   lastGameplayJson: "{\n    \"sceneName\": \"OutdoorsScene\",\n    \"savedAtUtc\":
-    \"2026-03-23T16:28:34.7203579Z\",\n    \"playerPosition\": {\n        \"x\":
-    -730.2803955078125,\n        \"y\": -3.4113426208496095,\n        \"z\": -117.03949737548828\n   
-    },\n    \"playerHealth\": 100.0,\n    \"npcPosition\": {\n        \"x\": -666.1026000976563,\n       
-    \"y\": -3.5758442878723146,\n        \"z\": -151.69125366210938\n    },\n   
-    \"npcState\": \"Patrol\",\n    \"currentScore\": 11,\n    \"coinsCollected\":
-    11,\n    \"totalCoinsInScene\": 42,\n    \"elapsedTime\": 41.91607666015625\n}"
-  lastStatisticsJson: "{\n    \"savedAtUtc\": \"2026-03-23T16:28:34.7208749Z\",\n   
-    \"highScore\": 11,\n    \"previousScore\": 11,\n    \"sessionCount\": 3,\n   
+    \"2026-04-20T14:41:49.6612892Z\",\n    \"playerPosition\": {\n        \"x\":
+    -709.9078369140625,\n        \"y\": -3.522794723510742,\n        \"z\": -138.951416015625\n   
+    },\n    \"playerHealth\": 100.0,\n    \"npcPosition\": {\n        \"x\": -669.7723999023438,\n       
+    \"y\": -3.5758442878723146,\n        \"z\": -154.75643920898438\n    },\n   
+    \"npcState\": \"Patrol\",\n    \"currentScore\": 12,\n    \"coinsCollected\":
+    12,\n    \"totalCoinsInScene\": 43,\n    \"elapsedTime\": 99.12643432617188\n}"
+  lastStatisticsJson: "{\n    \"savedAtUtc\": \"2026-04-20T14:41:49.6623039Z\",\n   
+    \"highScore\": 12,\n    \"previousScore\": 12,\n    \"sessionCount\": 5,\n   
     \"bestTime\": 0.019999992102384568\n}"
   lastEnvironmentJson: "{\n    \"sceneName\": \"OutdoorsScene\",\n    \"savedAtUtc\":
-    \"2026-03-23T16:28:34.7223935Z\",\n    \"sceneObjects\": []\n}"
+    \"2026-04-20T14:41:49.6623039Z\",\n    \"sceneObjects\": []\n}"
