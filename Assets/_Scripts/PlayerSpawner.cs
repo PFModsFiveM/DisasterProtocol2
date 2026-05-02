@@ -122,7 +122,6 @@ public class PlayerSpawner : MonoBehaviour
         capsule.transform.localPosition = new Vector3(0, 1f, 0);
         capsule.transform.localScale = new Vector3(1f, 2f, 1f);
 
-        // Remove the extra collider so it doesn't fight the player controller.
         Collider capsuleCollider = capsule.GetComponent<Collider>();
         if (capsuleCollider != null)
         {
