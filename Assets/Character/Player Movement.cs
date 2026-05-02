@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private float originalStepOffset;
     private float? lastGroundedTime;
     private float? jumpButtonPressedTime;
-    private float pitch;
+    public float pitch;
     private float inputMagnitude;
     private bool isRunning;
 
