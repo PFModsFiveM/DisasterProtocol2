@@ -1,6 +1,10 @@
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.Netcode.Transports.UTP;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class PlayerSpawner : MonoBehaviour
 {
@@ -18,6 +22,14 @@ public class PlayerSpawner : MonoBehaviour
         if (NetworkManager.Singleton != null)
         {
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        }
+    }
+
+    void Start()
+    {
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            SpawnNpcs();
         }
     }
 
@@ -57,15 +69,21 @@ public class PlayerSpawner : MonoBehaviour
         {
             GameObject spawnPoint = new GameObject($"SpawnPoint_{i}");
             spawnPoint.transform.parent = transform;
-            spawnPoint.transform.position = new Vector3(i * 5f, 0f, 0f);
+            spawnPoint.transform.position = new Vector3(i * 5f - 7.5f, 5f, i * 5f - 7.5f);
             spawnPoints[i] = spawnPoint.transform;
         }
 
-        Debug.Log("Created default spawn points");
+        Debug.Log("Created default spawn points at origin area");
     }
+
+    public int npcCount = 2;
+    public bool spawnNpcs = true;
+    private bool npcsSpawned;
 
     private void OnClientConnected(ulong clientId)
     {
+        Debug.Log($"PlayerSpawner: OnClientConnected({clientId}) called. Server={NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer}");
+
         if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer)
             return;
 
@@ -74,7 +92,7 @@ public class PlayerSpawner : MonoBehaviour
             : transform;
 
         GameObject playerInstance = CreatePlayerObject();
-        playerInstance.transform.position = spawnPoint.position + Vector3.up * 1.1f;
+        playerInstance.transform.position = spawnPoint.position + Vector3.up * 0.5f;
         playerInstance.transform.rotation = spawnPoint.rotation;
 
         NetworkObject networkObject = playerInstance.GetComponent<NetworkObject>();
@@ -87,6 +105,64 @@ public class PlayerSpawner : MonoBehaviour
         {
             Debug.LogError("NetworkObject component missing on player!");
         }
+
+        if (spawnNpcs && clientId == NetworkManager.Singleton.LocalClientId)
+        {
+            SpawnNpcs();
+        }
+    }
+
+    private void SpawnNpcs()
+    {
+        if (npcsSpawned || !spawnNpcs || npcCount <= 0 || NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer)
+            return;
+
+        npcsSpawned = true;
+
+        for (int i = 0; i < npcCount; i++)
+        {
+            Transform spawnPoint = spawnPoints.Length > 0
+                ? spawnPoints[i % spawnPoints.Length]
+                : transform;
+
+            GameObject npc = CreateNpcObject(i);
+            npc.transform.position = spawnPoint.position + Vector3.up * 1.1f + Vector3.right * (i * 2f + 2f);
+
+            NetworkObject networkObject = npc.GetComponent<NetworkObject>();
+            if (networkObject != null)
+            {
+                networkObject.Spawn();
+            }
+        }
+    }
+
+    private GameObject CreateNpcObject(int index)
+    {
+        GameObject npc = new GameObject($"NetworkNPC_{index}");
+        npc.tag = "NPC";
+
+        npc.AddComponent<NetworkObject>();
+        npc.AddComponent<NetworkTransform>();
+        npc.AddComponent<NetworkNpcMover>();
+
+        GameObject body = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        body.transform.parent = npc.transform;
+        body.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+        body.transform.localScale = new Vector3(1f, 1f, 1f);
+
+        Collider cubeCollider = body.GetComponent<Collider>();
+        if (cubeCollider != null)
+        {
+            Object.Destroy(cubeCollider);
+        }
+
+        Renderer renderer = body.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            renderer.material.color = Color.red;
+        }
+
+        return npc;
     }
 
     private GameObject CreatePlayerObject()
@@ -94,10 +170,14 @@ public class PlayerSpawner : MonoBehaviour
         GameObject player = new GameObject("NetworkPlayer");
         player.tag = "Player";
 
-        CharacterController controller = player.AddComponent<CharacterController>();
-        controller.height = 2f;
-        controller.radius = 0.5f;
-        controller.center = new Vector3(0, 1f, 0);
+        Rigidbody rb = player.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+
+        CharacterController characterController = player.AddComponent<CharacterController>();
+        characterController.height = 2f;
+        characterController.radius = 0.5f;
+        characterController.center = new Vector3(0, 1f, 0);
 
         player.AddComponent<Animator>();
 
@@ -132,6 +212,18 @@ public class PlayerSpawner : MonoBehaviour
         if (renderer != null)
         {
             renderer.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        }
+
+        var animator = player.GetComponent<Animator>();
+        if (animator != null)
+        {
+#if UNITY_EDITOR
+            RuntimeAnimatorController runtimeController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Character/Player_Animator.controller");
+            if (runtimeController != null)
+            {
+                animator.runtimeAnimatorController = runtimeController;
+            }
+#endif
         }
 
         return player;
